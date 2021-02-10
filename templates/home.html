@@ -1,0 +1,174 @@
+<html>
+<head>
+</head>
+
+<body>
+	<header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li class="current"><a href="{{url_for('home')}}">Home</a></li>
+                    <li><a href="{{url_for('addPublication')}}">Add</a></li>
+					<li onclick="window.location='http://localhost:5000/dropSession'" type="submit"><a>Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+		<div class = "container_head">
+
+		</div>
+
+		<div class="main">
+			<p >
+				<form method="post" action="/home" class = "search">
+					<input type="text" placeholder="Paper Title" name="search_paperTitle" value="">
+					<input type="text" placeholder="Faculty Author" name="search_facultyAuthor" value="">
+					<input type="text" placeholder="Journal Name" name="search_journalName" value="">
+					<input type="text" placeholder="Journal Type" name="search_journalType" value="">
+					<input type="text" placeholder="Citation Number" name="search_citationNumber" value="">
+					<input type = "submit" class="search_button" value="Search" name="search_button">
+					<a href="{{url_for('.download')}}">Download Result</a>
+				</form>
+			</p>
+		</div>
+
+		<div>
+			<p class="search_message">
+				{{search_message}}
+			</p>
+		</div>
+
+		<div class="display_body" name="display_body">
+
+			<table class="table">
+				<tr>
+					<th> Paper ID </th>
+					<th> Paper Title </th>
+					<th> Citation Number </th>
+					<th> Journal Name </th>
+					<th> Punblication Link </th>
+					<th>  Date Of Publish</th>
+				</tr>
+
+				{%for i in range(row)%}
+					<tr>
+						<td> {{result[i][0]}} </td>
+						<td> {{result[i][1]}} </td>
+						<td> {{result[i][2]}} </td>
+						<td> {{result[i][3]}} </td>
+						<td> {{result[i][4]}} </td>
+						<td> {{result[i][5]}} </td>
+					</tr>
+				{%endfor%}
+
+			</table>
+
+		</div>
+
+
+
+</body>
+
+<style>
+
+		input{
+			height: 30px;
+			width: 20rem;
+			display: inline;
+		}
+
+		.search_button{
+			width: 100px;
+		}
+
+		.search {
+			margin: 20px 40% 20px 40%ss;
+			margin-left: 7rem;
+
+			//padding: 10px;
+		}
+
+		.container{
+			width:90%;
+			margin: auto;
+			overflow: auto;
+		}
+
+		header{
+            background: #35424a;
+            color: #ffffff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #06c258 3px solid;
+        }
+
+        header a{
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        header li{
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+
+        header nav{
+            float: right;
+            margin-top: 10px;
+        }
+
+        header .highlight, header .current a{
+            color: #06c258;
+            font-weight: bold;
+        }
+
+        header a:hover{
+            color: #cccccc;
+            font-weight: bold;
+        }
+
+		body {
+			background-color: rgba(0, 205, 255, 0.1);
+		}
+
+<!--	.container_head {-->
+<!--		width: 100%;-->
+<!--		height: 200px;-->
+<!--		background-color: rgba(0, 204, 255, 0.4);-->
+<!--	}-->
+
+<!--	.search {-->
+<!--		margin: 20px 40% 20px 40%ss;-->
+<!--		margin-left: 42%;-->
+<!--		-->
+<!--		//padding: 10px;-->
+<!--	}-->
+
+	
+	.display_body {
+		background-color: rgba(12, 12, 12, 0.01);
+		width: 100%;
+		height: 70%;
+	}
+	
+	.table {
+		width: 100%;
+	}
+	
+	th, tr {
+		padding: 10px; 
+	}
+
+	td {
+		text-align: center;
+	}
+	
+
+</style>
+
+</html>
