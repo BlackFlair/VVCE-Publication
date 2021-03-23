@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Faculty Details</title>
+
+    <style type="text/css">
+	
+			/*add this to every file*/
+			
+			body {
+				margin: 0;
+			}
+
+			
+			
+            .container{
+                width:90%;
+                margin: auto;
+            }
+
+    <!--		body {-->
+    <!--			background-color: rgba(0, 204, 255, 0.3);-->
+    <!--		}-->
+
+            header{
+                background: #35424a;
+                color: #ffffff;
+                padding-top: 30px;
+                min-height: 70px;
+                border-bottom: #06c258 3px solid;
+            }
+
+            header a{
+                color: #ffffff;
+                text-decoration: none;
+                text-transform: uppercase;
+                font-size: 16px;
+            }
+
+            header li{
+                float: left;
+                display: inline;
+                padding: 0 20px 0 20px;
+            }
+
+            header nav{
+                float: right;
+                margin-top: 10px;
+            }
+
+            header .highlight, header .current a{
+                color: #06c258;
+                font-weight: bold;
+            }
+
+            header a:hover{
+                color: #cccccc;
+                font-weight: bold;
+            }
+
+        body {
+            background-color: rgba(0, 205, 255, 0.1);
+        }
+
+    <!--	.container_head {-->
+    <!--		height: 200px;-->
+    <!--		width: 100%;-->
+    <!--		background-color: rgba(0, 205, 255, 0.4);-->
+    <!--	}-->
+
+        .container {
+            background-color: white;
+            width: 60%;
+            line-height: 15px;
+            margin-bottom: 5%;
+            box-shadow: 0 12px 20px 9px rgba(100, 100, 100, .4);
+        }
+
+        .h1 {
+            margin: 20px 0;
+            padding: 30px 0;
+            size: 12%;
+        }
+
+        .content {
+            text-align: left;
+            padding-left: 40px;
+            font-size: 18px;
+        }
+
+        .str {
+            height: 20px;
+        }
+
+        .facultyDropdown {
+            width: 50px;
+            height: 30px;
+            margin-top: 2%;
+        }
+
+        input[type="text"], input[type="select"]  {
+            width: 380px;
+            margin-top: 2%;
+        }
+
+        input[type="date"] {
+            width: 150px;
+            margin-top: 2%;
+        }
+		
+		input[type="radio"] {
+           // width: 150px;
+            line-height: 5%;
+        }
+
+        .abstract {
+            width: 90%;
+            height: 100px;
+
+        }
+
+        .submit {
+            margin-bottom: 20px;
+            padding: 10px;
+        }
+
+        .dropbtn {
+          background-color: #4CAF50;
+          color: white;
+          padding: 16px;
+          font-size: 16px;
+          border: none;
+          cursor: pointer;
+        }
+
+        .dropdown {
+          position: relative;
+          display: inline-block;
+        }
+
+        .dropdown-content {
+          display: none;
+          position: absolute;
+          background-color: #f9f9f9;
+          min-width: 160px;
+          box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+          z-index: 1;
+        }
+
+        .dropdown-content a {
+          color: black;
+          padding: 12px 16px;
+          text-decoration: none;
+          display: block;
+        }
+
+        .dropdown-content a:hover {background-color: #f1f1f1}
+
+        .dropdown:hover .dropdown-content {
+          display: block;
+        }
+
+        .dropdown:hover .dropbtn {
+          background-color: #3e8e41;
+        }
+
+        select {
+            margin-top: 2%;
+        }
+
+    </style>
+
+</head>
+<body>
+
+    <header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="{{url_for('home')}}">Home</a></li>
+                    <li><a href="{{url_for('addPublication')}}">Add</a></li>
+                    <li  class="current"><a href="{{url_for('facultyDetails')}}">Profile</a></li>
+					<li onclick="window.location='http://localhost:5000/dropSession'" type="submit"><a>Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container">
+			<h1 class="h1" style="color: rgb(4, 0, 7); padding-left: 4%;">EDIT PROFILE</h1>
+
+			<form action="/facultyDetails" method="post" enctype="multipart/form-data">
+
+                <div class="content">
+					<p>Faculty ID:
+					    <input type="text" class="str" placeholder="Faculty ID" name="paperTitle" value="{{details[0][0]}}" required>
+					</input>
+
+                    <p>Name:
+                        <select name="salutation" class="facultyDropdown" >
+                            <div class="dropdown-content">
+								<option value="{{details[0][1]}}">{{details[0][1]}}</option>
+                                <option value="Dr."> Dr. </option>
+                                <option value="Mr."> Mr. </option>
+                                <option value="Ms."> Ms. </option>
+                            </div>
+					    </select>
+					    <input type="text" class="str" placeholder="Faculty Name" name="name" value="{{details[0][2]}}" required>
+					</p>
+
+                    <p>Contact Number:
+					    <input type="text" class="str" placeholder="Contact Number" name="phone" value="{{details[0][3]}}" required>
+					</p>
+
+                    <p>Email ID:
+					    <input type="text" class="str" placeholder="Contact Number" name="email" value="{{details[0][4]}}" required>
+					</p>
+
+                    <p>PAN Number:
+					    <input type="text" class="str" placeholder="" name="pan" value="{{details[0][5]}}" required>
+					</p>
+
+                    <p>Aadhar Number:
+					    <input type="text" class="str" placeholder="" name="aadhar" value="{{details[0][7]}}" required>
+					</p>
+
+                    <p>Bank Account Number:
+					    <input type="text" class="str" placeholder="" name="bank" value="{{details[0][9]}}" required>
+					</p>
+
+                    <p>IFSC Code:
+					    <input type="text" class="str" placeholder="" name="ifsc" value="{{details[0][10]}}" required>
+					</p>
+
+                    <p>Date Of Joining:
+					    <input type="text" class="str" placeholder="" name="doj_current" value="{{details[0][11]}}" required>
+					</p>
+
+
+
+                    <p>Department:
+					    <input type="text" class="str" placeholder="" name="department" value="{{details[0][13]}}" required>
+					</p>
+
+
+					<p>Promoted?
+					  <input type="radio" class="yes"  value="yes" name="promoted">
+					  <label for="yes">Yes</label>
+					  <input type="radio" class="no"  value="no" name="promoted">
+					  <label for="no">No</label>
+					</p>
+
+					<p>Promotion Order:
+					<input type="file" class="promotion_order" size="2800" name="promotionOrder" value="{{details[0][15]}}" >
+					</p>
+
+					<p>Appointment Order:
+					<input type="file" class="appointment_order" size="2800" name="appointmentOrder" value="{{details[0][18]}}" >
+					</p>
+
+
+					<p>Registered for Phd?
+					  <input type="radio" class="yes"  value="yes" name="phd">
+					  <label for="yes">Yes</label>
+					  <input type="radio" class="no"  value="no" name="phd">
+					  <label for="no">No</label>
+					</p>
+					
+					<p>If registered, mention date:
+					<input type="date" class="phd_date" name="phdDate" value="{{details[0][17]}}" >
+					</p>
+
+					<p>Contract:
+					  <input type="radio" class="temporary"  value="yes" name="contract">
+					  <label for="temporary">Temporary</label>
+					  <input type="radio" class="permanent"  value="no" name="contract">
+					  <label for="permanent">Permanent</label>
+					</p>
+					
+					<p>Adjunct faculty:
+					  <input type="radio" class="yes"  value="yes" name="adjunct">
+					  <label for="yes">Yes</label>
+					  <input type="radio" class="no"  value="no" name="adjunct">
+					  <label for="no">No</label>
+					</p>
+					
+					<h4>Education:</h4>
+					
+					<!--add here-->
+					
+					
+					<h4>Work history</h4>
+					
+					<p>Organisation Name:
+					    <input type="text" class="str" placeholder="Organization Name" name="organization" required>
+					</p>
+					
+					<p>Designation:
+					    <input type="text" class="str" placeholder="Designation" name="org_designation" required>
+					</p>
+					
+					<p>Date of Joining:
+					<input type="date" class="date_of_joining" name="org_doj" >
+					</p>
+					
+					<p>Date of Relieving:
+					<input type="date" class="date_of_relieving" name="org_dor" >
+					</p>
+					
+					<p>Relieving Letter:
+					<input type="file" class="Relieving_letter" size="2800" name="org_relievingLetter" >
+					</p>
+					
+					<p>Current Status
+					  <input type="radio" class="working"  value="working"  name="org_status">
+					  <label for="working">Working</label>
+					  <input type="radio" class="retired"  value="retired"  name="org_status">
+					  <label for="retired">Retired</label>
+					</p>
+					
+<!--					<p>If Relieved, mention date:-->
+<!--					<input type="file" class="date_of_releaving" size="2800"  name="">-->
+<!--					</p>-->
+
+
+					<br>
+
+					<input type="submit" class="submit" value="SUBMIT">
+
+
+
+                </div>
+            </form>
+    </div>
+</body>
+</html>
