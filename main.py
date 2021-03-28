@@ -284,8 +284,11 @@ def facultyDetails():
         print(query2)
 
 
+
         if request.method == "POST": # ="{}",
+            print('__1__')
             try:
+                id = request.form['id']
                 salutation = request.form.get('salutation')
                 name = request.form['name']
                 phone = request.form['phone']
@@ -298,7 +301,7 @@ def facultyDetails():
                 ifsc = request.form['ifsc']
                 dojCurrent = request.form['doj_current']
                 department = request.form['department']
-                designation = '-'
+                designation = '-' #request.form['designation']
                 promoted = request.form.get('promoted')
                 promotionOrder = request.files['promotionOrder']
                 appointmentOrder = request.files['appointmentOrder']
@@ -313,22 +316,51 @@ def facultyDetails():
                 orgReleavingLetter = request.files['org_relievingLetter']
                 orgStatus = request.form.get('org_status')
 
+                print('__2__')
+
                 promotionOrder = promotionOrder.read()
                 appointmentOrder = appointmentOrder.read()
                 orgReleavingLetter = orgReleavingLetter.read()
 
-                educationHistory = []
+                print('__3__')
+
+                educationHistory = {'A':'a'}
                 workHistory = {'Organization':organization, 'Designation':orgDesignation, 'DOJ':orgDoj, 'DOR':orgDor, 'ReleavingLetter':orgReleavingLetter, 'Status':orgStatus}
 
-                query3 = '''UPDATE Faculty SET Salutation=="{a}", Name="{b}", Phone="{c}", Email="{d}", PANNumber="{e}", PANImage="{f}", 
-                            AadharNumber="{g}", AadharImage="{h}", AccountNumber="{i}", IFSC="{j}", DOJ="{k}", Designation="{l}", Department="{m}", 
-                            Promoted="{n}", PromotionOrder="{o}", RegisteredPhD="{p}", PhDRegDate="{q}", AppointmentOrder="{r}", 
-                            Contract="{s}", AdjnctFaculty="{t}", Education="{u}", WorkHistory="{v}" 
-                            WHERE ID="{w}"'''.format(a=salutation, b=name, c=phone, d=email, e=pan, f=panImg, g=aadhar, h=aadharImg, i=accNum,
-                                                    j=ifsc, k=dojCurrent, l=designation, m=department, n=promoted, o=promotionOrder,
-                                                    p=phd, q=phdDate, r=appointmentOrder, s=contract, t=adjunct, u=educationHistory, v=workHistory, w=query2[0][0])
+                # query3 = '''UPDATE Faculty SET Salutation="{a}", Name="{b}", Phone="{c}", Email="{d}", PANNumber="{e}", PANImage="{f}",
+                #             AadharNumber="{g}", AadharImage="{h}", AccountNumber="{i}", IFSC="{j}", DOJ="{k}", Designation="{l}", Department="{m}",
+                #             Promoted="{n}", PromotionOrder="{o}", RegisteredPhD="{p}", PhDRegDate="{q}", AppointmentOrder="{r}",
+                #             Contract="{s}", AdjnctFaculty="{t}", Education="{u}", WorkHistory="{v}"
+                #             WHERE ID="{w}"'''.format(a=salutation, b=name, c=phone, d=email, e=pan, f=panImg, g=aadhar, h=aadharImg, i=accNum,
+                #                                     j=ifsc, k=dojCurrent, l=designation, m=department, n=promoted, o=promotionOrder,
+                #                                     p=phd, q=phdDate, r=appointmentOrder, s=contract, t=adjunct, u=educationHistory, v=workHistory, w=query2[0][0])
 
-                cursor.execute(query3)
+                query3 = '''INSERT INTO Faculty (ID, Salutation, Name, Phone, Email, PANNumber, PANImage, 
+                            AadharNumber, AadharImage, AccountNumber, IFSC, DOJ, Designation, Department, 
+                            Promoted, PromotionOrder, RegisteredPhD, PhDRegDate, AppointmentOrder, 
+                            Contract, AdjunctFaculty, Education, WorkHistory) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ? )'''
+
+                query4 = '''DELETE FROM Faculty WHERE ID="{id}"'''.format(id=id)
+
+                print('__4__')
+
+                print(type(promoted))
+                print(type(contract))
+                print(type(adjunct))
+
+                cursor.execute(query4)
+
+                print('__5__')
+
+                cursor.execute(query3, (id, salutation, name, phone, email, pan, panImg, aadhar, aadharImg, accNum,
+                                                    ifsc, dojCurrent, designation, department, promoted, promotionOrder,
+                                                    phd, phdDate, appointmentOrder, contract, adjunct, str(educationHistory), str(workHistory)))
+
+                print('__6__')
+
+                connection.commit()
+
+                print('__7__')
 
 
             except sqlite3.Error as e:
