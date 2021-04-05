@@ -163,7 +163,6 @@ def signup():
                 connection.commit()
                 print("Commit 2 successful")
 
-                connection.close()
                 cursor.close()
                 print("Close successful")
 
@@ -199,7 +198,7 @@ def addPublication():
         print(g.user)
 
         for i in range(length):
-            name = query1[i][0] + " " + query1[i][1]
+            name = str(query1[i][0]) + " " + str(query1[i][1])
             fAuthor.append(name)
             print(fAuthor)
 
@@ -277,7 +276,8 @@ def facultyDetails():
         for i in range(jobRole_length):
             jobRole.append(query1[i][1])
 
-        query2 = '''SELECT * FROM Faculty WHERE Name="{name}"'''.format(name=g.user)
+        print(g.user)
+        query2 = '''SELECT * FROM Faculty WHERE ID="{name}"'''.format(name=g.user)
 
         query2 = cursor.execute(query2)
         query2 = query2.fetchall()
@@ -294,14 +294,14 @@ def facultyDetails():
                 phone = request.form['phone']
                 email = request.form['email']
                 pan = request.form['pan']
-                panImg = '-' #request.files['']
+                panImg = request.files['panImg']
                 aadhar = request.form['aadhar']
-                aadharImg = '-' #request.files['']
+                aadharImg = request.files['aadharImg']
                 accNum = request.form['bank']
                 ifsc = request.form['ifsc']
                 dojCurrent = request.form['doj_current']
                 department = request.form['department']
-                designation = '-' #request.form['designation']
+                designation = request.form['designation']
                 promoted = request.form.get('promoted')
                 promotionOrder = request.files['promotionOrder']
                 appointmentOrder = request.files['appointmentOrder']
@@ -309,6 +309,12 @@ def facultyDetails():
                 phdDate = request.form['phdDate']
                 contract = request.form.get('contract')
                 adjunct = request.form.get('adjunct')
+                degree = request.form['degree']
+                college = request.form['college']
+                university = request.form['university']
+                yob = request.form['yob']
+                yoc = request.form['yoc']
+                certificate = request.files['certificate']
                 organization = request.form['organization']
                 orgDesignation = request.form['org_designation']
                 orgDoj = request.form['org_doj']
@@ -318,13 +324,16 @@ def facultyDetails():
 
                 print('__2__')
 
+                panImg = panImg.read()
+                aadharImg = aadharImg.read()
+                certificate = certificate.read()
                 promotionOrder = promotionOrder.read()
                 appointmentOrder = appointmentOrder.read()
                 orgReleavingLetter = orgReleavingLetter.read()
 
                 print('__3__')
 
-                educationHistory = {'A':'a'}
+                educationHistory = {'Degree':degree, 'College':college, 'University':university, 'Joining':yob, 'Completion':yoc, 'Certificate': certificate}
                 workHistory = {'Organization':organization, 'Designation':orgDesignation, 'DOJ':orgDoj, 'DOR':orgDor, 'ReleavingLetter':orgReleavingLetter, 'Status':orgStatus}
 
                 # query3 = '''UPDATE Faculty SET Salutation="{a}", Name="{b}", Phone="{c}", Email="{d}", PANNumber="{e}", PANImage="{f}",
