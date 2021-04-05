@@ -9,8 +9,6 @@ db = "\Publication.db"
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
-
-
 global s_result
 
 @app.route('/download')
@@ -82,8 +80,6 @@ def home():
     s_result = result
 
     if g.user:
-        print(result)
-
         row = len(result)
 
         search_message = ""
@@ -113,10 +109,6 @@ def home():
 
             query2 = '''SELECT PaperID, PaperTitle, CitationNumber, PublishedIn, PublicationLink, DateOfPublication FROM Publications WHERE '''+condition.format(paperTitle=search_paperTitle,facultyAuthor=search_facultyAuthor,journalName=search_journalName,journalType=search_journalType,citationNumber=search_citationNumber)
 
-            print(query2)
-
-            # search_message = "Showing results for: " + condition
-
             try:
                 result = cursor.execute(query2).fetchall()
                 s_result = result
@@ -139,7 +131,6 @@ def signup():
         connection = sqlite3.connect(currentDirectory + db)
         connection1 = sqlite3.connect(currentDirectory + db)
         cursor = connection.cursor()
-        cursor1 = connection1.cursor()
 
         query1 = '''INSERT INTO Login VALUES(?, ?)'''
         query2 = '''INSERT INTO Faculty (ID) VALUES (?)'''
@@ -151,20 +142,11 @@ def signup():
             conPass = request.form['conPass']
 
             if password == conPass:
-                print("Password matched\n"+userName+" : "+password)
-
                 cursor.execute(query1, (userName, password))
-                print("Insert 1 successful")
                 connection.commit()
-                print("Commit 1 successful")
-
                 cursor.execute(query2, (userName,))
-                print("Insert 2 successful")
                 connection.commit()
-                print("Commit 2 successful")
-
                 cursor.close()
-                print("Close successful")
 
                 return render_template('signin.html')
 
@@ -172,7 +154,6 @@ def signup():
                 print("Password entered does not match.")
 
         except sqlite3.Error as e:
-            print("User Name already exists.")
             print(e)
 
         connection.close()
@@ -200,7 +181,6 @@ def addPublication():
         for i in range(length):
             name = str(query1[i][0]) + " " + str(query1[i][1])
             fAuthor.append(name)
-            print(fAuthor)
 
         if request.method == 'POST':
 
@@ -232,24 +212,18 @@ def addPublication():
                 hIndex = request.form['hIndex']
                 assistance = request.form.get('assistance')
                 amount = request.form['amount']
-                print("Variable assignment successful")
 
                 cursor.execute(query2, (paperTitle, checkbox, facultyAuthor, studentAuthor, paragraphText,
                                         publishedIn, journal, date, publicationIndex, ISSN, doi,
                                         publicationLink, uploadLink, certificationLink, impactFactor,
                                         cited, citedNumber, hIndex, assistance, amount, g.user))
-                print("Insert successful")
 
                 connection.commit()
-                print("Commit successful")
-
                 connection.close()
-                print("Close successful")
 
                 return redirect(url_for('home'))
 
             except sqlite3.Error as e:
-                print("Data entered error")
                 print(e)
 
         return render_template('addPublication.html', length=length, fAuthor=fAuthor)
@@ -281,12 +255,8 @@ def facultyDetails():
 
         query2 = cursor.execute(query2)
         query2 = query2.fetchall()
-        print(query2)
 
-
-
-        if request.method == "POST": # ="{}",
-            print('__1__')
+        if request.method == "POST":
             try:
                 id = request.form['id']
                 salutation = request.form.get('salutation')
@@ -322,8 +292,6 @@ def facultyDetails():
                 orgReleavingLetter = request.files['org_relievingLetter']
                 orgStatus = request.form.get('org_status')
 
-                print('__2__')
-
                 panImg = panImg.read()
                 aadharImg = aadharImg.read()
                 certificate = certificate.read()
@@ -331,18 +299,8 @@ def facultyDetails():
                 appointmentOrder = appointmentOrder.read()
                 orgReleavingLetter = orgReleavingLetter.read()
 
-                print('__3__')
-
                 educationHistory = {'Degree':degree, 'College':college, 'University':university, 'Joining':yob, 'Completion':yoc, 'Certificate': certificate}
                 workHistory = {'Organization':organization, 'Designation':orgDesignation, 'DOJ':orgDoj, 'DOR':orgDor, 'ReleavingLetter':orgReleavingLetter, 'Status':orgStatus}
-
-                # query3 = '''UPDATE Faculty SET Salutation="{a}", Name="{b}", Phone="{c}", Email="{d}", PANNumber="{e}", PANImage="{f}",
-                #             AadharNumber="{g}", AadharImage="{h}", AccountNumber="{i}", IFSC="{j}", DOJ="{k}", Designation="{l}", Department="{m}",
-                #             Promoted="{n}", PromotionOrder="{o}", RegisteredPhD="{p}", PhDRegDate="{q}", AppointmentOrder="{r}",
-                #             Contract="{s}", AdjnctFaculty="{t}", Education="{u}", WorkHistory="{v}"
-                #             WHERE ID="{w}"'''.format(a=salutation, b=name, c=phone, d=email, e=pan, f=panImg, g=aadhar, h=aadharImg, i=accNum,
-                #                                     j=ifsc, k=dojCurrent, l=designation, m=department, n=promoted, o=promotionOrder,
-                #                                     p=phd, q=phdDate, r=appointmentOrder, s=contract, t=adjunct, u=educationHistory, v=workHistory, w=query2[0][0])
 
                 query3 = '''INSERT INTO Faculty (ID, Salutation, Name, Phone, Email, PANNumber, PANImage, 
                             AadharNumber, AadharImage, AccountNumber, IFSC, DOJ, Designation, Department, 
@@ -351,29 +309,15 @@ def facultyDetails():
 
                 query4 = '''DELETE FROM Faculty WHERE ID="{id}"'''.format(id=id)
 
-                print('__4__')
-
-                print(type(promoted))
-                print(type(contract))
-                print(type(adjunct))
-
                 cursor.execute(query4)
-
-                print('__5__')
 
                 cursor.execute(query3, (id, salutation, name, phone, email, pan, panImg, aadhar, aadharImg, accNum,
                                                     ifsc, dojCurrent, designation, department, promoted, promotionOrder,
                                                     phd, phdDate, appointmentOrder, contract, adjunct, str(educationHistory), str(workHistory)))
 
-                print('__6__')
-
                 connection.commit()
 
-                print('__7__')
-
-
             except sqlite3.Error as e:
-                print("Data entered error")
                 print(e)
 
         return render_template('facultyDetails.html', jobRole=jobRole, details=query2)
