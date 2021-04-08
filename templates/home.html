@@ -16,22 +16,22 @@
         </div>
     </header>
 
-
+	<form method="post" action="/home" class = "search">
 		<div class = "container_head">
 
 		</div>
 
 		<div class="main">
 			<p >
-				<form method="post" action="/home" class = "search">
+
 					<input type="text" placeholder="Paper Title" name="search_paperTitle" value="">
 					<input type="text" placeholder="Faculty Author" name="search_facultyAuthor" value="">
 					<input type="text" placeholder="Journal Name" name="search_journalName" value="">
 					<input type="text" placeholder="Journal Type" name="search_journalType" value="">
-					<input type="text" placeholder="Citation Number" name="search_citationNumber" value="">
-					<input type = "submit" class="search_button" value="Search" name="search_button">
+<!--					<br><br><label>Published From: </label><input type="date" class="date" name="from" value="">-->
+<!--					<label>  To: </label><input type="date" class="date" name="to" value="">-->
+					<input type = "submit" class="search_button" value="Search" name="search">
 					<a href="{{url_for('.download')}}">Download Result</a>
-				</form>
 			</p>
 		</div>
 
@@ -47,26 +47,33 @@
 				<tr>
 					<th> Paper ID </th>
 					<th> Paper Title </th>
-					<th> Citation Number </th>
+					<th> Index </th>
 					<th> Journal Name </th>
 					<th> Publication Link </th>
-					<th>  Date Of Publish</th>
+					<th> Date Of Publish </th>
 				</tr>
 
-				{%for i in range(row)%}
-					<tr>
-						<td> {{result[i][0]}} </td>
-						<td> {{result[i][1]}} </td>
-						<td> {{result[i][2]}} </td>
-						<td> {{result[i][3]}} </td>
-						<td> {{result[i][4]}} </td>
-						<td> {{result[i][5]}} </td>
-					</tr>
-				{%endfor%}
+
+					{%for i in range(row)%}
+						<tr>
+							<td> {{result[i][0]}} </td>
+							<td> {{result[i][1]}} </td>
+							<td> {{result[i][2]}} </td>
+							<td> {{result[i][3]}} </td>
+							<td> {{result[i][4]}} </td>
+							<td> {{result[i][5]}} </td>
+							{%if (role[0][0] == "Admin")%}
+							<td><input type="submit" value="Edit {{result[i][0]}}" class="edit" name="edit">
+							<input type="submit" value="Delete {{result[i][0]}}" class="edit" name="delete"></td>
+							{%endif%}
+						</tr>
+					{%endfor%}
+
 
 			</table>
 
 		</div>
+	</form>
 
 
 
@@ -84,6 +91,10 @@
 			width: 100px;
 		}
 
+		.date{
+			width=100px;
+		}
+
 		.search {
 			margin: 20px 40% 20px 40%ss;
 			margin-left: 7rem;
@@ -95,6 +106,10 @@
 			width:90%;
 			margin: auto;
 			overflow: auto;
+		}
+
+		.edit{
+			width:70px;
 		}
 
 		header{

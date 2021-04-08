@@ -14,6 +14,10 @@ global s_result
 @app.route('/download')
 def download():
     global s_result
+    _result = s_result.split()
+
+    connection = sqlite3.connect(currentDirectory + db)
+    cursor = connection.cursor()
 
     if g.user:
         output = io.BytesIO()
@@ -22,17 +26,18 @@ def download():
 
         sh = workbook.add_sheet('Search Result')
 
-        sh.write(0, 0, 'Paper Id')
-        sh.write(0, 1, 'Paper Title')
-        sh.write(0, 2, 'Citation Number')
-        sh.write(0, 3, 'Journal Name')
-        sh.write(0, 4, 'Publication Link')
+        headding = ['Paper ID', 'Paper Title', 'At', 'Faculty Author', 'Student Author', 'Abstract', 'Published In', 'Level', 'Date of Publication', 'Index', 'ISSN/ISBN', 'DOI', 'Publication Link', 'Upload Link', 'Certification Link', 'Impact Factor', 'Cited', 'Citation Number', 'H-Index', 'Financial Assistance', 'Amount', 'User Name']
 
-        i = 1
-        for row in s_result:
-            for j in range (len(row)):
-                sh.write(i, j, row[j])
-            i+=1
+        for i in range(len(headding)):
+            sh.write(0, i, headding[i])
+
+        for i in range(len(_result)):
+            query1 = '''SELECT * FROM Publications WHERE PaperID = {id}'''.format(id=int(_result[i]))
+            query1 = cursor.execute(query1).fetchall()
+            j=0
+            for x in range(len(query1[0])):
+                sh.write(i+1, j, query1[0][x])
+                j+=1
 
         workbook.save(output)
         output.seek(0)
@@ -56,8 +61,8 @@ def index():
             pwd = cursor.execute(query)
             pwd = pwd.fetchone()[0]
 
-        except:
-            print("User name does not exist.")  # Display invalid login message
+        except sqlite3.Error as e:
+            print(e)  # Display invalid login message
 
         if request.form['password'] == pwd:
             session['user'] = request.form['userName']  # userName : name given in html component for user name field
@@ -73,55 +78,174 @@ def home():
     connection = sqlite3.connect(currentDirectory + db)
     cursor = connection.cursor()
 
-    query1 = '''SELECT PaperID, PaperTitle, CitationNumber, PublishedIn, PublicationLink, DateOfPublication FROM Publications WHERE UserName="{name}"'''.format(name=g.user)
+    query1 = '''SELECT PaperID, PaperTitle, _Index, PublishedIn, PublicationLink, DateOfPublication FROM Publications WHERE UserName="{name}"'''.format(name=g.user)
 
-    result = cursor.execute(query1).fetchall()
+    query3 = '''SELECT Role FROM Login WHERE Name="{name}"'''.format(name=g.user)
+
+    try:
+        role = cursor.execute(query3).fetchall()
+        result = cursor.execute(query1).fetchall()
+    except sqlite3.Error as e:
+        print(e)
+
+
+    _result = ''
+    for i in range(len(result)):
+        _result = _result + " " + str(result[i][0])
+
     global s_result
-    s_result = result
+    s_result = _result
 
     if g.user:
         row = len(result)
 
         search_message = ""
 
-        if request.form.get('search_button'):
-            print("Button pressed.")
+        if 'search' in request.form:
             search_paperTitle = request.form['search_paperTitle']
             search_facultyAuthor = request.form['search_facultyAuthor']
             search_journalName = request.form['search_journalName']
             search_journalType = request.form['search_journalType']
-            search_citationNumber = request.form['search_citationNumber']
+
+            # search_from = request.form['from']
+            # search_to = request.form['to']
+            #
+            # dateRange = ''
+            #
+            # if search_from == '':
+            #     pass
+            # else:
+            #     pass
+            #
+            # if search_to == '':
+            #     pass
+            # else:
+            #     pass
 
             condition = ""
 
-            x = [search_paperTitle, search_facultyAuthor, search_journalName, search_journalType, search_citationNumber, '']
-            y = ['PaperTitle=', ' FacultyAuthor=', ' PublishedIn=', ' Level=', ' CitationNumber=', None]
-            z = ["'{paperTitle}'", "'{facultyAuthor}'", "'{journalName}'", "'{journalType}'", "'{citationNumber}'", None]
+            x = [search_paperTitle, search_facultyAuthor, search_journalName, search_journalType, '']
+            y = ['PaperTitle=', ' FacultyAuthor=', ' PublishedIn=', ' Level=',  None]
+            z = ["'{paperTitle}'", "'{facultyAuthor}'", "'{journalName}'", "'{journalType}'",  None]
 
             for i in range(len(x)-1):
                 if x[i] != "":
                     condition += y[i]+z[i]
-                    print(condition)
                 if x[i + 1] != "" :
                     condition += "and"
-                    print(x[i+1])
 
-
-            query2 = '''SELECT PaperID, PaperTitle, CitationNumber, PublishedIn, PublicationLink, DateOfPublication FROM Publications WHERE '''+condition.format(paperTitle=search_paperTitle,facultyAuthor=search_facultyAuthor,journalName=search_journalName,journalType=search_journalType,citationNumber=search_citationNumber)
+            query2 = '''SELECT PaperID, PaperTitle, _Index, PublishedIn, PublicationLink, DateOfPublication FROM Publications WHERE '''+condition.format(paperTitle=search_paperTitle,facultyAuthor=search_facultyAuthor,journalName=search_journalName,journalType=search_journalType)
 
             try:
                 result = cursor.execute(query2).fetchall()
-                s_result = result
+                _result = ''
+                for i in range(len(result)):
+                    _result = _result + " " + str(result[i][0])
+                s_result = _result
             except sqlite3.Error as e:
                 search_message = e
-            print(result)
 
             row = len(result)
 
-        return render_template('home.html', user=g.user, result=result, row=row, search_message=search_message)
+        elif 'edit' in request.form:
+            id = request.form['edit']
+            id = id[5:]
+
+            connection = sqlite3.connect(currentDirectory + db)
+            cursor = connection.cursor()
+
+            query1 = '''SELECT PaperID, PaperTitle, At, FacultyAuthor, StudentAuthor, Abstract,
+                                        PublishedIn, Level, DateOfPublication, _Index, ISSN_ISBN,
+                                        DOI, PublicationLink, UploadLink, CertificateLink, ImpactFactorOfPublication, 
+                                        Cited, CitationNumber, HIndex, FinancialAssistance, Amount, UserName 
+                                        FROM Publications WHERE PaperID={id}'''.format(id=id)
+
+            query1 = cursor.execute(query1)
+            query1 = query1.fetchall()
+
+            query2 = '''SELECT Salutation, Name FROM Faculty'''
+            query2 = cursor.execute(query2)
+            query2 = query2.fetchall()
+
+            length = len(query2)
+
+            fAuthor = []
+
+            for i in range(length):
+                name = str(query2[i][0]) + " " + str(query2[i][1])
+                fAuthor.append(name)
+
+            return render_template('editPublication.html', length=length, fAuthor=fAuthor, query1=query1)
+
+        elif 'delete' in request.form:
+            query4 = '''DELETE FROM Publications WHERE PaperID=?'''
+
+            id = request.form['delete']
+            id = id[7:]
+
+            cursor.execute(query4, (id,))
+            connection.commit()
+
+            return redirect(url_for('home'))
+
+        return render_template('home.html', user=g.user, result=result, row=row, search_message=search_message, role=role)
 
     return redirect(url_for('index'))
 
+
+@app.route('/editPublication', methods=['POST', 'GET'])
+def editPublication():
+    if g.user:
+        connection = sqlite3.connect(currentDirectory + db)
+        cursor = connection.cursor()
+
+        if request.method == 'POST':
+            id = request.form['id']
+            query3 = '''UPDATE Publications SET
+                                PaperTitle=?, At=?, FacultyAuthor=?, StudentAuthor=?, Abstract=?,
+                                PublishedIn=?, Level=?, DateOfPublication=?, _Index=?, ISSN_ISBN=?,
+                                DOI=?, PublicationLink=?, UploadLink=?, CertificateLink=?, ImpactFactorOfPublication=?, 
+                                Cited=?, CitationNumber=?, HIndex=?, FinancialAssistance=?, Amount=?
+                                WHERE PaperID=?'''
+
+            try:
+                paperTitle = request.form['paperTitle']
+                checkbox = ", ".join(request.form.getlist('checkbox'))
+                facultyAuthor = request.form.get('facultyAuthor')
+                studentAuthor = request.form['studentNames']
+                paragraphText = request.form['paragraphText']
+                publishedIn = request.form['publishedIn']
+                journal = request.form.get('journal')
+                date = request.form['date']
+                index = request.form.get('index')
+                if (index == "Other"):
+                    index = request.form['index']
+                ISSN = request.form.get('ISSN_ISBN')
+                publicationLink = request.form['publicationLink']
+                uploadLink = request.form['uploadLink']
+                certificationLink = request.form['certificationLink']
+                impactFactor = request.form['impactFactor']
+                doi = request.form['doi']
+                cited = request.form.get('cited')
+                citedNumber = request.form['citedNumber']
+                hIndex = request.form['hIndex']
+                assistance = request.form.get('assistance')
+                amount = request.form['amount']
+
+                cursor.execute(query3, (paperTitle, checkbox, facultyAuthor, studentAuthor, paragraphText,
+                                        publishedIn, journal, date, index, ISSN, doi,
+                                        publicationLink, uploadLink, certificationLink, impactFactor,
+                                        cited, citedNumber, hIndex, assistance, amount, id))
+
+                connection.commit()
+                connection.close()
+
+                return redirect(url_for('home'))
+
+            except sqlite3.Error as e:
+                print(e)
+
+    return render_template('signin.html')
 
 @app.route('/signup', methods=['POST', 'GET'])
 def signup():
@@ -129,7 +253,6 @@ def signup():
         session.pop('user', None)
 
         connection = sqlite3.connect(currentDirectory + db)
-        connection1 = sqlite3.connect(currentDirectory + db)
         cursor = connection.cursor()
 
         query1 = '''INSERT INTO Login VALUES(?, ?)'''
@@ -175,18 +298,14 @@ def addPublication():
 
         fAuthor = []
 
-        print(query1)
-        print(g.user)
-
         for i in range(length):
             name = str(query1[i][0]) + " " + str(query1[i][1])
             fAuthor.append(name)
 
         if request.method == 'POST':
-
             query2 = '''INSERT INTO Publications 
                     (PaperTitle, At, FacultyAuthor, StudentAuthor, Abstract,
-                    PublishedIn, Level, DateOfPublication, PublicationIndex, ISSN_ISBN,
+                    PublishedIn, Level, DateOfPublication, _Index, ISSN_ISBN,
                     DOI, PublicationLink, UploadLink, CertificateLink, ImpactFactorOfPublication, 
                     Cited, CitationNumber, HIndex, FinancialAssistance, Amount, UserName)
                     VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
@@ -200,7 +319,9 @@ def addPublication():
                 publishedIn = request.form['publishedIn']
                 journal = request.form.get('journal')
                 date = request.form['date']
-                publicationIndex = request.form['publicationIndex']
+                index = request.form.get('index')
+                if (index == "Other"):
+                    index = request.form['index']
                 ISSN = request.form.get('ISSN_ISBN')
                 publicationLink = request.form['publicationLink']
                 uploadLink = request.form['uploadLink']
@@ -214,7 +335,7 @@ def addPublication():
                 amount = request.form['amount']
 
                 cursor.execute(query2, (paperTitle, checkbox, facultyAuthor, studentAuthor, paragraphText,
-                                        publishedIn, journal, date, publicationIndex, ISSN, doi,
+                                        publishedIn, journal, date, index, ISSN, doi,
                                         publicationLink, uploadLink, certificationLink, impactFactor,
                                         cited, citedNumber, hIndex, assistance, amount, g.user))
 
@@ -250,7 +371,6 @@ def facultyDetails():
         for i in range(jobRole_length):
             jobRole.append(query1[i][1])
 
-        print(g.user)
         query2 = '''SELECT * FROM Faculty WHERE ID="{name}"'''.format(name=g.user)
 
         query2 = cursor.execute(query2)

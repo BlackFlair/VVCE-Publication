@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Edit Publication</title>
+</head>
+
+<body> <!--style="background: url('1.jpg'); background-size: 100% 100%;"-->
+
+	<header>
+        <div class="container">
+            <nav>
+                <ul>
+                    <li><a href="{{url_for('home')}}">Home</a></li>
+                    <li><a href="{{url_for('addPublication')}}">Add</a></li>
+					<li><a href="{{url_for('facultyDetails')}}">Profile</a></li>
+					<li onclick="window.location='http://localhost:5000/dropSession'" type="submit"><a>Logout</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+
+	<center>
+	
+		<div class="container_head">
+
+		</div>
+
+		<div class="container">
+			<h1 class="h1" style="color: rgb(4, 0, 7);">Edit Publication Details</h1>
+
+
+			<form action="/editPublication" method="post">
+
+				<!-- Paper Title :Textbox -->
+				<div class="content">
+					Paper ID: <input name="id" value="{{query1[0][0]}}" style="width=100px;">{{query1[0][0]}}</input>
+
+					<p>Paper Title:
+					<input type="text" class="str" value="{{query1[0][1]}}" name="paperTitle" required>
+					</p><br>
+
+					<!-- Book/Journal/Conference :Checkbox -->
+					<div class="form-check">Publication type:
+						<input type="checkbox" name="checkbox" value="Book">Book
+						<input type="checkbox" name="checkbox" value="Journal">Journal
+						<input type="checkbox" name="checkbox" value="Conference">Conference
+					</div><br>
+
+					<!-- Faculty Author Names -->
+					<label>Faculty author name:</label>
+					<select name="facultyAuthor" class="authorDropdown">
+						<div class="dropdown-content">
+							<option value="{{query1[0][3]}}">{{query1[0][3]}}</option>
+							{%for i in range(0,length):%}
+								<option value="{{fAuthor[i]}}">{{fAuthor[i]}}</option>
+							{%endfor%}
+						</div>
+					</select>
+					<br>
+
+					<!-- Student author names -->
+					<p>Student author's name:
+					<input type="text" class="str" name="studentNames" value="{{query1[0][4]}}">
+					</p><br>
+
+					<!-- Abstract -->
+					<p >Abstract:</p>
+					<textarea name="paragraphText" class="abstract" value="{{query1[0][5]}}" required></textarea><br>
+
+					<!-- Published in -->
+					<p>Published in:
+						<input type="text" class="str" value="{{query1[0][6]}}" name="publishedIn" required>
+					</p><br>
+
+					<!-- National/International -->
+					<p> Journal type:
+						<input type="radio" class="Cited" name="journal" value="National">
+						<label>National</label>
+						<input type="radio" class="Cited" name="journal" value="International">
+						<label>International</label>
+					</p><br>
+
+					<!-- Date of Publication-->
+						<label>Date of publication:</label>
+						<input type="date" class="date" name="date" value="{{query1[0][8]}}" required><br>
+
+					<!-- Publication Index -->
+					<p>Index:
+						<input type="radio" class="Cited" name="index" value="National">
+						<label>SCOPUS</label>
+						<input type="radio" class="Cited" name="index" value="International">
+						<label>Web of science</label>
+						<input type="radio" class="Cited" name="index" value="Other">
+						<label>Other:</label>
+						<input type="text" class="str" name="index">
+					</p><br>
+
+					<!--  ISSN/ISBN -->
+					<p>ISSN/ISBN:
+						<input type="text" class="str" value="{{query1[0][10]}}" name="ISSN_ISBN" required>
+					</p><br>
+
+					<!-- DOI -->
+					<p>Date of issue:
+						<input type="date" class="str" value="{{query1[0][11]}}" name="doi">
+					</p><br>
+
+					<!-- Publication link -->
+					<p>Publication link:
+						<input type="text" class="str" value="{{query1[0][12]}}" name="publicationLink">
+					</p><br>
+
+					<!-- Upload link -->
+					<p>Upload link:
+						<input type="text" class="str" value="{{query1[0][13]}}" name="uploadLink">
+					</p><br>
+
+					<!-- Certificate link -->
+					<p>Certification link:
+						<input type="text" class="str" value="{{query1[0][14]}}" name="certificationLink">
+					</p><br>
+
+					<!-- Impact Factor of publication -->
+					<p>Impact factor:
+						<input type="text" class="str" value="{{query1[0][15]}}" name="impactFactor">
+					</p><br>
+
+					<!-- Cited -->
+					<p>Cited:
+						<input type="radio" class="Yes" name="cited" value="Yes">
+						<label>Yes</label>
+						<input type="radio" class="No" name="cited" value="No">
+						<label>No</label>
+					</p><br>
+
+					<p>If Yes, mention number:
+						<input type="text" class="str" value="{{query1[0][17]}}" name="citedNumber">
+					</p><br>
+
+					<!-- h-index -->
+					<p>h-Index:
+						<input type="text" class="str" value="{{query1[0][18]}}" name="hIndex">
+					</p><br>
+
+					<!-- Financial Assistance -->
+					<p>Financial Assistance:
+						<input type="radio" class="Yes" name="assistance" value="Yes">
+						<label>Yes</label>
+						<input type="radio" class="No" name="assistance" value="No">
+						<label>No</label>
+					</p><br>
+
+					<p>If Yes, mention a mount:
+						<input type="text" class="str" value="{{query1[0][20]}}" name="amount">
+					</p><br>
+				</div>
+
+				<input type="submit" class="submit" value="UPDATE">
+
+			</form>
+		</div> <!--container-->
+	</center>
+</body>
+
+<style type="text/css">
+
+		.container{
+			width:90%;
+			margin: auto;
+		}
+
+<!--		body {-->
+<!--			background-color: rgba(0, 204, 255, 0.3);-->
+<!--		}-->
+
+		header{
+            background: #35424a;
+            color: #ffffff;
+            padding-top: 30px;
+            min-height: 70px;
+            border-bottom: #06c258 3px solid;
+        }
+
+        header a{
+            color: #ffffff;
+            text-decoration: none;
+            text-transform: uppercase;
+            font-size: 16px;
+        }
+
+        header li{
+            float: left;
+            display: inline;
+            padding: 0 20px 0 20px;
+        }
+
+        header nav{
+            float: right;
+            margin-top: 10px;
+        }
+
+        header .highlight, header .current a{
+            color: #06c258;
+            font-weight: bold;
+        }
+
+        header a:hover{
+            color: #cccccc;
+            font-weight: bold;
+        }
+	
+	body {
+		background-color: rgba(0, 205, 255, 0.1);
+	}
+	
+<!--	.container_head {-->
+<!--		height: 200px;-->
+<!--		width: 100%;-->
+<!--		background-color: rgba(0, 205, 255, 0.4);-->
+<!--	}-->
+
+	.container {
+		background-color: white;
+		width: 60%;
+		line-height: 15px;
+		margin-bottom: 5%;
+		box-shadow: 0 12px 20px 9px rgba(100, 100, 100, .4);
+	}
+
+	.h1 {
+		margin: 20px 0;
+		padding: 30px 0;
+		size: 12%;
+	}
+
+	.content {
+		text-align: left;
+		padding-left: 40px;
+		font-size: 18px;
+	}
+
+	.str {
+		height: 20px;
+	}
+
+	.authorDropdown {
+		width: 200px;
+		height: 30px;
+		margin-top: 2%;
+	}
+
+	input[type="text"], input[type="select"] {
+		width: 380px;
+		margin-top: 2%;
+	}
+
+	input[type="date"] {
+		width: 150px;
+		margin-top: 2%;
+	}
+
+	.abstract {
+		width: 90%;
+		height: 100px;
+	
+	}
+	
+	.submit {
+		margin-bottom: 20px;
+		padding: 10px;
+	}
+ 
+	.dropbtn {
+	  background-color: #4CAF50;
+	  color: white;
+	  padding: 16px;
+	  font-size: 16px;
+	  border: none;
+	  cursor: pointer;
+	}
+
+	.dropdown {
+	  position: relative;
+	  display: inline-block;
+	}
+
+	.dropdown-content {
+	  display: none;
+	  position: absolute;
+	  background-color: #f9f9f9;
+	  min-width: 160px;
+	  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+	  z-index: 1;
+	}
+
+	.dropdown-content a {
+	  color: black;
+	  padding: 12px 16px;
+	  text-decoration: none;
+	  display: block;
+	}
+
+	.dropdown-content a:hover {background-color: #f1f1f1}
+
+	.dropdown:hover .dropdown-content {
+	  display: block;
+	}
+
+	.dropdown:hover .dropbtn {
+	  background-color: #3e8e41;
+	}
+	
+	select {
+		margin-top: 2%;
+	}
+	
+</style>
+
+</html>
