@@ -122,7 +122,7 @@ def home():
             # else:
             #     pass
 
-            condition = ""
+            condition = []
 
             x = [search_paperTitle, search_facultyAuthor, search_journalName, search_journalType, '']
             y = ['PaperTitle=', ' FacultyAuthor=', ' PublishedIn=', ' Level=',  None]
@@ -130,12 +130,18 @@ def home():
 
             for i in range(len(x)-1):
                 if x[i] != "":
-                    condition += y[i]+z[i]
-                if x[i + 1] != "" :
-                    condition += "and"
+                    cond = y[i]+'"'+x[i]+'"'
+                    print(type(x[i]))
+                    condition.append(cond)
+                    # condition += y[i]+x[i]
+                # if x[i + 1] != "" or x[i-1] != "":
+                #     condition += "and"
 
+            s = ' and'
+            condition = s.join(condition)
+            print(condition)
             query2 = '''SELECT PaperID, PaperTitle, _Index, PublishedIn, PublicationLink, DateOfPublication FROM Publications WHERE '''+condition.format(paperTitle=search_paperTitle,facultyAuthor=search_facultyAuthor,journalName=search_journalName,journalType=search_journalType)
-
+            print(query2)
             try:
                 result = cursor.execute(query2).fetchall()
                 _result = ''
@@ -143,7 +149,7 @@ def home():
                     _result = _result + " " + str(result[i][0])
                 s_result = _result
             except sqlite3.Error as e:
-                search_message = e
+                print(e)
 
             row = len(result)
 
@@ -255,7 +261,7 @@ def signup():
         connection = sqlite3.connect(currentDirectory + db)
         cursor = connection.cursor()
 
-        query1 = '''INSERT INTO Login VALUES(?, ?)'''
+        query1 = '''INSERT INTO Login (Name, Password) VALUES(?, ?)'''
         query2 = '''INSERT INTO Faculty (ID) VALUES (?)'''
 
 
@@ -436,6 +442,8 @@ def facultyDetails():
                                                     phd, phdDate, appointmentOrder, contract, adjunct, str(educationHistory), str(workHistory)))
 
                 connection.commit()
+
+                return redirect(url_for('home'))
 
             except sqlite3.Error as e:
                 print(e)
