@@ -48,7 +48,6 @@ def download():
 @app.route('/', methods=['POST', 'GET'])
 def index():
     session.pop('user', None)
-
     if request.method == 'POST':
         session.pop('user', None)
 
@@ -355,7 +354,7 @@ def addPublication():
 
         return render_template('addPublication.html', length=length, fAuthor=fAuthor)
 
-    return render_template('signin.html')
+    # return render_template('signin.html')
 
 
 @app.route('/facultyDetails', methods=['POST', 'GET'])
@@ -379,8 +378,10 @@ def facultyDetails():
 
         query2 = '''SELECT * FROM Faculty WHERE ID="{name}"'''.format(name=g.user)
 
+
         query2 = cursor.execute(query2)
         query2 = query2.fetchall()
+        print(query2)
 
         if request.method == "POST":
             try:
